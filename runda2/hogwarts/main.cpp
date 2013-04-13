@@ -80,9 +80,9 @@ inline void rezolva() {
     for (int i = m - 1; i > 0; --i) {
         locId = locInd[i];
 
-        while (fav.size() > locSize[locInd]) {
+        while ((int)fav.size() > locSize[locId]) {
             neFav.insert(*fav.rbegin());
-            fav.erase(fav.rbegin());
+            fav.erase(--fav.rbegin().base());
         }
 
         if ((neFav.begin()->fs) == i) {
@@ -138,7 +138,7 @@ inline void rezolva() {
         }
 
         // vad daca pot sa umplu pachetul curent doar cu vraji favorite
-        if (fav.size() == (locSize[locId] - j)) {
+        if ((int)fav.size() == (locSize[locId] - j)) {
             pacheteMax[++pacheteMax[0]] = locId;
 
             for (; j < locSize[locId]; ++j) {
@@ -158,12 +158,6 @@ inline void rezolva() {
         } else {
             // Pachetul asta nu va contine doar vraji favorite
 
-            /* Problema:
-             * daca mai trebuie sa adaug vraji in pachetul asta nu stiu pe care
-             * sa le adaug.
-             * Unele pachete favorite se pot intoarce impotriva mea la un moment dat.
-             */
-
             while (j < locSize[locId] && !neFav.empty()) {
                 vIt = neFav.begin();
                 v = *vIt;
@@ -178,14 +172,63 @@ inline void rezolva() {
                     ++neFavCoolDownSize;
                 }
             }
+
+            while (j < locSize[locId]) {
+                v = *(fav.rbegin());
+                fav.erase(--fav.rbegin().base());
+
+                loc[locId][j] = v.sc;
+                ++j;
+
+                --v.fs;
+                if (v.fs > 0) {
+                    favCoolDown[favCoolDownSize] = v;
+                    ++favCoolDownSize;
+                }
+            }
+
         }
 
-        // !!!!!!!!!!!!!!!!!!!!! Mutata din favCoolDown si neFavCoolDown inapoi in seturi
-        // !!!!!!!!!!!!!!!!!!!!!
+        for (int j = 0; j < favCoolDownSize; ++j) {
+            fav.insert(favCoolDown[j]);
+        }
+        for (int j = 0; j < neFavCoolDownSize; ++j) {
+            neFav.insert(neFavCoolDown[j]);
+        }
     }
 }
 
 inline void scrie() {
+    for (int i = 1; i <= m; ++i) {
+        if (locSize[i] == 0) {
+            printf("\n");
+            continue;
+        }
+
+        sort(loc[i], loc[i] + locSize[i]);
+        printf("%d", loc[i][0]);
+        for (int j = 1; j < locSize[i]; ++j) {
+            printf(" %d", loc[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("%d\n", pacheteMax[0]);
+    for (int i = pacheteMax[0]; i > 0; --i) {
+        int locId = pacheteMax[i];
+
+        if (locSize[locId] == 0) {
+            printf("\n");
+            continue;
+        }
+
+        sort(loc[locId], loc[locId] + locSize[locId]);
+        printf("%d", loc[locId][0]);
+        for (int j = 1; j < locSize[locId]; ++j) {
+            printf(" %d", loc[locId][j]);
+        }
+        printf("\n");
+    }
 }
 
 int main() {
