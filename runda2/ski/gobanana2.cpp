@@ -74,8 +74,8 @@ int main() {
             G[y].push_back(make_pair(x, encode(dist, tip-1)));
         }
     }
-    dijk(X, 1, D1);
-    dijk(Y, 0, D2);
+    dijk(X, 0, D1);
+    dijk(Y, 1, D2);
 
     int nod = -1; double cst = INF;
     for(int i = 1; i <= n; i++) {
