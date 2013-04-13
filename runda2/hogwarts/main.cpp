@@ -141,7 +141,7 @@ inline void rezolva() {
         if ((int)fav.size() == (locSize[locId] - j)) {
             pacheteMax[++pacheteMax[0]] = locId;
 
-            for (; j < locSize[locId]; ++j) {
+            while (j < locSize[locId]) {
                 vIt = fav.begin();
                 v = *vIt;
                 fav.erase(vIt);
