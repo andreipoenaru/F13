@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1365840961 source:/home/andrei/Sources/CodeBlocksWorkspace/hogwarts/main.cpp
+	<cstdio>
+	<set>
+	<algorithm>
+
