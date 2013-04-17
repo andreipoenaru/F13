@@ -1,0 +1,299 @@
+#include<fstream>
+#include<cstdlib>
+#include<iostream>
+using namespace std;
+int tabla[10][10],tabla2[10][10];
+pair<int,int> pq,pk,pb,pg;
+ifstream f1 ("room94.in");
+ofstream f2 ("room94.out");
+int dx[]={1,1,2,2,-1,-1,-2,-2};
+int dy[]={2,-2,1,-1,2,-2,1,-1};
+int gx[]={0,0,1,1,1,-1,-1,-1};
+int gy[]={1,-1,1,0,-1,1,0,-1};
+int viz[9][9][9][9][9][9][3];
+int dist[9][9][9][9][9][9][3];
+struct queue
+{
+  int i1,i2,j1,j2,k1,k2;
+	int t;
+} ;
+queue Q[800000];
+int head, tail;
+int sah (int x, int y)
+{
+	if (tabla[x][y]!=0)
+		return 1;
+	for (int i=x+1; i<=8; i++) //coloana
+	{
+		if (tabla[i][y]!=0 && tabla[i][y]!=1) break;
+		if (tabla[i][y]==1) return 1;
+	}
+	for (int i=x-1; i>=1; i--) //coloana
+	{
+		if (tabla[i][y]!=0 && tabla[i][y]!=1) break;
+		if (tabla[i][y]==1) return 1;
+	}
+	for (int i=y+1; i<=8; i++) //linie
+	{
+		if (tabla[x][i]!=0 && tabla[x][i]!=1) break;
+		if (tabla[x][i]==1) return 1;
+	}
+	for (int i=y-1; i>=1; i--) //linie
+	{
+		if (tabla[x][i]!=0 && tabla[x][i]!=1) break;
+		if (tabla[x][i]==1) return 1;
+	}
+	for (int i=1; x+i<=8 && y+i<=8; i++) //diagonala 1
+	{
+		if (tabla[x+i][y+i]!=0 && tabla[x+i][y+i]!=1 && tabla[x+i][y+i]!=3) break;
+		if (tabla[x+i][y+i]!=0) return 1;
+	}
+	for (int i=1; x-i>=1 && y-i>=1; i++)// diagonala 1
+	{
+		if (tabla[x-i][y-i]!=0 && tabla[x-i][y-i]!=1 && tabla[x-i][y-i]!=3) break;
+		if (tabla[x-i][y-i]!=0) return 1;
+	}
+	for (int i=1; x+i<=8 && y-i>=1; i++) //diagonala 2
+	{
+		if (tabla[x+i][y-i]!=0 && tabla[x+i][y-i]!=1 && tabla[x+i][y-i]!=3) break;
+		if (tabla[x+i][y-i]!=0) return 1;
+	}
+	for (int i=1; x-i>=1 && y+i<=8; i++) //diagonala 2
+	{
+		if (tabla[x-i][y+i]!=0 && tabla[x-i][y+i]!=1 && tabla[x-i][y+i]!=3) break;
+		if (tabla[x-i][y+i]!=0) return 1;
+	}
+	for (int i=0; i<8; i++) //cal
+		if (tabla[x+dx[i]][y+dy[i]]==2 && x+dx[i]>=1 && x+dx[i]<=8 && y+dy[i]>=1 && y+dy[i]<=8) return 1;
+	return 0;
+}
+int gata ()
+{
+	for (int i=0; i<8; i++)
+		if (sah(pg.first+gx[i],pg.second+gy[i])==0)
+			return 0;
+	return 1;
+}
+inline int vizit()
+{
+	int a=pq.first,b=pq.second,c=pk.first,d=pk.second,e=pb.first,f=pb.second;
+	return viz[a][b][c][d][e][f][2]==1;
+}
+
+int main()
+{
+	char c;
+	for (int i=1; i<=8; i++)
+		for (int j=1; j<=8; j++)
+		{
+			f1>>c;
+			if (c=='G') tabla[i][j]=4,pg.first=i,pg.second=j;
+			if (c=='B') pb.first=i,pb.second=j;
+			if (c=='K') pk.first=i,pk.second=j;
+			if (c=='Q') pq.first=i,pq.second=j;
+			if (c=='P') tabla[i][j]=-1;
+		}
+	for (int i1=1; i1<=8; i1++)
+		for (int i2=1; i2<=8; i2++)
+			for (int j1=1; j1<=8; j1++)
+				for (int j2=1; j2<=8; j2++)
+					for (int k1=1; k1<=8; k1++)
+						for (int k2=1; k2<=8; k2++)
+							if ( (i1!=j1 || i2!=j2) && (i1!=k1||i2!=k2) && (j1!=k1 || j2!=k2) && tabla[i1][i2]==0 && tabla[j1][j2]==0 && tabla[k1][k2]==0){
+								tabla[i1][i2]=1,tabla[j1][j2]=2,tabla[k1][k2]=3;
+								if (gata()) 
+								{
+								viz[i1][i2][j1][j2][k1][k2][0]=1;
+								dist[i1][i2][j1][j2][k1][k2][0]=0;
+								viz[i1][i2][j1][j2][k1][k2][1]=1;
+								dist[i1][i2][j1][j2][k1][k2][1]=0;
+								viz[i1][i2][j1][j2][k1][k2][2]=1;
+								dist[i1][i2][j1][j2][k1][k2][2]=0;
+								Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+								Q[head].t=0;
+								head++;
+								Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+								Q[head].t=1;
+								head++;
+								Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+								Q[head].t=2;
+								head++;
+								}
+								tabla[i1][i2]=tabla[j1][j2]=tabla[k1][k2]=0;
+							}
+
+	while (vizit()==0)
+	{
+		int i1=Q[tail].i1,i2=Q[tail].i2,j1=Q[tail].j1,j2=Q[tail].j2,k1=Q[tail].k1,k2=Q[tail].k2, t=Q[tail].t;
+		tabla[i1][i2]=1,tabla[j1][j2]=2,tabla[k1][k2]=3;
+		if (t==0)
+		{
+			int x=i1,y=i2;
+			for (int i=x+1; i<=8; i++)  // coloana 
+			{
+				if (tabla[i][i2]!=0) break;
+				if (!viz[i][i2][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i][i2][j1][j2][k1][k2][2]=1;
+					dist[i][i2][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=x-1; i>=1; i--) // coloana
+			{
+				if (tabla[i][i2]!=0) break;
+				if (!viz[i][i2][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i][i2][j1][j2][k1][k2][2]=1;
+					dist[i][i2][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=y+1; i<=8; i++) // linie
+			{
+				if (tabla[i1][i]!=0) break;
+				if (!viz[i1][i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1,Q[head].i2=i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1][i][j1][j2][k1][k2][2]=1;
+					dist[i1][i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=y-1; i>=1; i--) // linie 
+			{
+				if (tabla[i1][i]!=0) break;
+				if (!viz[i1][i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1,Q[head].i2=i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1][i][j1][j2][k1][k2][2]=1;
+					dist[i1][i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=1; x+i<=8 && y+i<=8; i++) //diagonala 1 
+			{
+				if (tabla[i1+i][i2+i]!=0) break;
+				if (!viz[i1+i][i2+i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1+i,Q[head].i2=i2+i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1+i][i2+i][j1][j2][k1][k2][2]=1;
+					dist[i1+i][i2+i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=1; x-i>=1 && y-i>=1; i++)//diagonala 1 
+			{
+				if (tabla[i1-i][i2-i]!=0) break;
+				if (!viz[i1-i][i2-i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1-i,Q[head].i2=i2-i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1-i][i2-i][j1][j2][k1][k2][2]=1;
+					dist[i1-i][i2-i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=1; x-i>=1 && y+i<=8; i++) //diagonala 2 
+			{
+				if (tabla[i1-i][i2+i]!=0) break;
+				if (!viz[i1-i][i2+i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1-i,Q[head].i2=i2+i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1-i][i2+i][j1][j2][k1][k2][2]=1;
+					dist[i1-i][i2+i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+			for (int i=1; x+i<=8 && y-i>=1; i++) //diagonala 2 
+			{
+				if (tabla[i1+i][i2-i]!=0) break;
+				if (!viz[i1+i][i2-i][j1][j2][k1][k2][2])
+				{
+					Q[head].i1=i1+i,Q[head].i2=i2-i,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=2;
+					head++;
+					viz[i1+i][i2-i][j1][j2][k1][k2][2]=1;
+					dist[i1+i][i2-i][j1][j2][k1][k2][2]=dist[i1][i2][j1][j2][k1][k2][0]+1;
+				}
+			}
+		}
+		if (t==1)
+		{
+			for (int i=0; i<8; i++) //cal
+				if (!viz[i1][i2][j1+dx[i]][j2+dy[i]][k1][k2][0] && j1+dx[i]>=1 && j1+dx[i]<=8 && j2+dy[i]<=8 && j2+dy[1]>=1 && tabla[j1+dx[i]][j2+dy[i]]==0)
+				{
+					Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1+dx[i],Q[head].j2=j2+dy[i],Q[head].k1=k1,Q[head].k2=k2;
+					Q[head].t=0;
+					head++;
+					viz[i1][i2][j1+dx[i]][j2+dy[i]][k1][k2][0]=1;
+					dist[i1][i2][j1+dx[i]][j2+dy[i]][k1][k2][0]=dist[i1][i2][j1][j2][k1][k2][1]+1;
+				}
+		}
+		if (t==2)
+		{
+			int x=k1,y=k2;
+			for (int i=1; x+i<=8 && y+i<=8; i++) //diagonala 1
+			{
+				if (tabla[k1+i][k2+i]!=0) break;
+				if (!viz[i1][i2][j1][j2][k1+i][k2+i][1])
+				{
+				Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1+i,Q[head].k2=k2+i;
+				Q[head].t=1;
+				head++;
+				viz[i1][i2][j1][j2][k1+i][k2+i][1]=1;
+				dist[i1][i2][j1][j2][k1+i][k2+i][1]=dist[i1][i2][j1][j2][k1][k2][2]+1;
+				}
+			}
+			for (int i=1; x-i>=1 && y-i>=1; i++) //diagonala 1
+			{
+				if (tabla[k1-i][k2-i]!=0) break;
+				if (!viz[i1][i2][j1][j2][k1-i][k2-i][1])
+				{
+					Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1-i,Q[head].k2=k2-i;
+					Q[head].t=1;
+					head++;
+					viz[i1][i2][j1][j2][k1-i][k2-i][1]=1;
+					dist[i1][i2][j1][j2][k1-i][k2-i][1]=dist[i1][i2][j1][j2][k1][k2][2]+1;
+				}
+			}
+			for (int i=1; x+i<=8 && y-i>=1; i++) //diagonala 2
+			{
+				if (tabla[k1+i][k2-i]!=0) break;
+				if (!viz[i1][i2][j1][j2][k1+i][k2-i][1])
+				{
+				Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1+i,Q[head].k2=k2-i;
+				Q[head].t=1;
+				head++;
+				viz[i1][i2][j1][j2][k1+i][k2-i][1]=1;
+				dist[i1][i2][j1][j2][k1+i][k2-i][1]=dist[i1][i2][j1][j2][k1][k2][2]+1;
+				}
+			}
+			for (int i=1; x-i>=1 && y+i<=8; i++) //diagonala 2
+			{
+				if (tabla[k1-i][k2+i]!=0) break;
+				if (!viz[i1][i2][j1][j2][k1-i][k2+i][1])
+				{
+				Q[head].i1=i1,Q[head].i2=i2,Q[head].j1=j1,Q[head].j2=j2,Q[head].k1=k1-i,Q[head].k2=k2+i;
+				Q[head].t=1;
+				head++;
+				viz[i1][i2][j1][j2][k1-i][k2+i][1]=1;
+				dist[i1][i2][j1][j2][k1-i][k2+i][1]=dist[i1][i2][j1][j2][k1][k2][2]+1;
+				}
+			}
+		}
+		tabla[i1][i2]=tabla[j1][j2]=tabla[k1][k2]=0;
+		tail++;
+	}
+	int z=dist[pq.first][pq.second][pk.first][pk.second][pb.first][pb.second][2];
+	f2<<z<<"\n";
+	return 0;
+}
