@@ -70,7 +70,8 @@ int sah (int x, int y)
 int gata ()
 {
 	for (int i=0; i<8; i++)
-		if (sah(pg.first+gx[i],pg.second+gy[i])==0)
+		if (pg.first+gx[i]>=1 &&pg.first+gx[i]<=8 && pg.second+gy[i]>=1 && pg.second+gy[i]<=8)
+					if (sah(pg.first+gx[i],pg.second+gy[i])==0)
 			return 0;
 	return 1;
 }
@@ -121,7 +122,6 @@ int main()
 								}
 								tabla[i1][i2]=tabla[j1][j2]=tabla[k1][k2]=0;
 							}
-
 	while (vizit()==0)
 	{
 		int i1=Q[tail].i1,i2=Q[tail].i2,j1=Q[tail].j1,j2=Q[tail].j2,k1=Q[tail].k1,k2=Q[tail].k2, t=Q[tail].t;
