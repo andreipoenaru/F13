@@ -122,6 +122,7 @@ int main()
 								}
 								tabla[i1][i2]=tabla[j1][j2]=tabla[k1][k2]=0;
 							}
+	dist[pq.first][pq.second][pk.first][pk.second][pb.first][pb.second][2]=-1;
 	while (vizit()==0 && tail<=head)
 	{
 		int i1=Q[tail].i1,i2=Q[tail].i2,j1=Q[tail].j1,j2=Q[tail].j2,k1=Q[tail].k1,k2=Q[tail].k2, t=Q[tail].t;
@@ -292,11 +293,6 @@ int main()
 		}
 		tabla[i1][i2]=tabla[j1][j2]=tabla[k1][k2]=0;
 		tail++;
-	}
-	if (tail>head)
-	{
-		f2<<-1<<"\n";
-		return 0;
 	}
 	int z=dist[pq.first][pq.second][pk.first][pk.second][pb.first][pb.second][2];
 	f2<<z<<"\n";
