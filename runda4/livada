@@ -1,0 +1,58 @@
+#include<cstdio>
+#include<algorithm>
+#define eps 1e-12
+#define pentru(i,a,b) for (int i=a; i<=b; i++)
+using namespace std;
+int n,k,st[10005];
+bool used[10005];
+struct pct {double x,y;};
+pct v[10005];
+int compar(double a,double b)
+{
+    if(a+eps < b) return -1;
+    if(b+eps < a) return 1;
+    return 0;
+}
+int cmp(const pct& a,const pct& b)
+{
+    if(!compar(a.y,b.y)) return (compar(a.x,b.x)==-1);
+    return (compar(a.y,b.y)==-1);
+}
+int plan(pct A,pct B,pct C)
+{
+    double a,b,c;
+    a=A.y-B.y;
+    b=B.x-A.x;
+    c=A.x*B.y-A.y*B.x;
+    return (compar(a*C.x+b*C.y+c,0));
+}
+int main ()
+{
+    freopen("livada.in","r",stdin);
+    freopen("livada.out","w",stdout);
+    scanf("%d",&n);
+    pentru(i,1,n) scanf("%lf",&v[i].x);
+    pentru(i,1,n) scanf("%lf",&v[i].y);
+    sort(v+1,v+n+1,cmp);   
+    k=2; st[1]=1;st[2]=2;
+    pentru(i,3,n)
+    {
+        while(k >= 2 && plan(v[st[k-1]],v[st[k]],v[i])<=0) --k;
+        st[++k] = i;
+    }
+    pentru(i,1,k) used[st[i]]=1;
+    used[1]=0;
+    for(int i=n;i>=1;i--)
+    {
+        if(used[i]) continue;
+        while(k>=2 && plan(v[st[k-1]],v[st[k]],v[i])<=0) --k;
+        st[++k]=i;
+    }  
+       double a=0;
+  st[k+1]=st[1];
+    for (int i=1; i<=k; i++)
+	a=a+v[st[i]].x*v[st[i+1]].y-v[st[i+1]].x*v[st[i]].y;
+    a=a/2;
+   printf ("%.02lf\n",a);
+    return 0;
+}
