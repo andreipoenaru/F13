@@ -57,7 +57,7 @@ int mod(int A[], int B)
 
 int compar (int A[], int B[])
 {
-  if (A[0]<B[0])
+	if (A[0]<B[0])
 		return -1;
 	if (A[0]>B[0])
 		return 1;
@@ -212,8 +212,5 @@ int main()
 		b=b+nr*p;
 		calcul(b,C);
 	}
-	int nor[10];
-	nor[0]=7;
-	nor[7]=1,nor[6]=0,nor[5]=4,nor[4]=8,nor[3]=5,nor[2]=7,nor[1]=6;
 	return 0;
 }
