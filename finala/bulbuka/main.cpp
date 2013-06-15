@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <cstring>
 using namespace std;
@@ -17,7 +18,7 @@ long long part_sol, SOL;
 int n;
 
 void add_trie(Trie *node, long long x, int h) {
-    if(h == -1) return;
+    if(h == -1 || (x & ((1LL<<(h+1))-1)) == 0) return;
     int bit = (x & (1LL<<h)) > 0;
     if(node->fiu[bit] == NULL) {
         node->fiu[bit] = new Trie();
@@ -27,6 +28,9 @@ void add_trie(Trie *node, long long x, int h) {
 
 void query_trie(Trie *node, long long x, int h) {
     if(h == -1 || node == NULL) {
+        if(h != -1) {
+            part_sol |= (x & ((1LL<<(h+1))-1));
+        }
         if(part_sol > SOL) {
             SOL = part_sol;
         }
@@ -43,24 +47,25 @@ void query_trie(Trie *node, long long x, int h) {
 }
 
 int main() {
-    freopen("bulbuka.in", "r", stdin);
-    freopen("bulbuka.out", "w", stdout);
-
+    //freopen("bulbuka.in", "r", stdin);
+    //freopen("bulbuka.out", "w", stdout);
+    ifstream fin("bulbuka.in");
+    ofstream fout("bulbuka.out");
     //scanf("%d", &n);
-    cin >> n;
+    fin >> n;
     long long pref = 0;
     for(int i = 1; i <= n; i++) {
-        cin >> v[i];
+        fin >> v[i];
         pref ^= v[i];
     }
     long long suf = 0;
-    for(int i = n; i >= 1; i--) {
+    for(int i = n; i >= 0; i--) {
         add_trie(root, suf, LOG_MAX);
         part_sol = 0;
         query_trie(root, pref, LOG_MAX);
         suf ^= v[i];
         pref ^= v[i];
     }
-    cout << SOL;
+    fout << SOL;
     return 0;
 }
