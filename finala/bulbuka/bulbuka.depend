@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1371277879 source:/home/alexf/Desktop/info/fii2013/finala/bulbuka/main.cpp
+	<iostream>
+	<cstdio>
+	<cstring>
+
