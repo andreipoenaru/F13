@@ -3,8 +3,9 @@
 #include <vector>
 using namespace std;
 
-#define M_MAX 15
+#define M_MAX 20
 #define pb push_back
+#define DELIMS " \n\r\t"
 
 vector< int > tStg[5];
 vector< int > tDr[5];
@@ -13,8 +14,27 @@ int val[M_MAX];
 
 inline void citire() {
     char stanga[M_MAX], dreapta[M_MAX], stare[M_MAX];
+    char line[M_MAX * 4];
+    char *sp;
+
     for (int i = 0; i < 3; ++i) {
-        scanf("%s%s%s", stanga, dreapta, stare);
+        fgets(line, M_MAX * 4, stdin);
+
+        sp = strtok(line, DELIMS);
+        strcpy(stanga, sp);
+
+        sp = strtok(NULL, DELIMS);
+        if (sp != NULL) {
+            strcpy(dreapta, sp);
+
+            sp = strtok(NULL, DELIMS);
+            strcpy(stare, sp);
+        } else {
+            strcpy(stare, stanga);
+            stanga[0] = '\0';
+            dreapta[0] = '\0';
+        }
+
 
         for (int j = 0; stanga[j] != '\0'; ++j) {
             tStg[i].pb(stanga[j] - 'A');
@@ -22,6 +42,8 @@ inline void citire() {
         for (int j = 0; dreapta[j] != '\0'; ++j) {
             tDr[i].pb(dreapta[j] - 'A');
         }
+
+        //fprintf(stderr, "%s %s %s\n", stanga, dreapta, stare);
 
         if (strcmp(stare, "sus") == 0) {
             stgMinusDr[i] = 1;
